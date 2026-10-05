@@ -1,0 +1,466 @@
+BÀI 1: CẤU HÌNH CƠ BẢN LAYER 2 (VLAN & ACCESS PORTS)
+    - Bước 1: Khởi tạo VLAN trên Core-SW1
+        Core-SW1(config)# vlan 10
+        Core-SW1(config-vlan)# name DATA
+        Core-SW1(config-vlan)# vlan 20
+        Core-SW1(config-vlan)# name SERVER
+        Core-SW1(config-vlan)# vlan 30
+        Core-SW1(config-vlan)# name VOICE
+        Core-SW1(config-vlan)# vlan 40
+        Core-SW1(config-vlan)# name GUEST
+        Core-SW1(config-vlan)# vlan 50
+        Core-SW1(config-vlan)# name ENG
+        Core-SW1# show vlan brief       (Kiểm tra đủ các VLAN)
+    - Bước 2: Gán các cổng Access cho End Devices trên các Switch tiếp cận
+        SW-Access1(config)# interface ethernet 0/0
+        SW-Access1(config-if)# switchport mode access
+        SW-Access1(config-if)# switchport access vlan 10
+        SW-Access2(config)# interface ethernet 0/0
+        SW-Access2(config-if)# switchport mode access
+        SW-Access2(config-if)# switchport access vlan 20
+        SW-Access3(config)# interface ethernet 0/0
+        SW-Access3(config-if)# switchport mode access
+        SW-Access3(config-if)# switchport access vlan 30
+        SW-Access4(config)# interface ethernet 0/0
+        SW-Access4(config-if)# switchport mode access
+        SW-Access4(config-if)# switchport access vlan 40
+        SW-Access5(config)# interface ethernet 0/0
+        SW-Access5(config-if)# switchport mode access
+        SW-Access5(config-if)# switchport access vlan 50
+        SW-Access6(config)# interface ethernet 0/0
+        SW-Access6(config-if)# switchport mode access
+        SW-Access6(config-if)# switchport access vlan 30
+BÀI 2: VTP VÀ TRUNK TOÀN BỘ MẠNG
+    2.1 Cấu hình VTP:
+    * Bước 1: Cấu hình VTP
+    Core-SW1: vtp mode server | vtp domain CCNA2026 | vtp password cisco
+    Core-SW2: vtp mode client | domain + password như trên.
+        Core-SW1(config)# vtp domain CCNA2026   - Đặt tên miền VTP chung cho hệ thống là CiscoNet
+        Core-SW1(config)# vtp password cisco    - Đặt mật khẩu đồng bộ bảo mật cho nhóm VTP
+        Core-SW1(config)# vtp mode server       - Cấu hình SW1 làm Server (được quyền tạo/xóa VLAN)
+        Core-SW2(config)# vtp domain CCNA2026
+        Core-SW2(config)# vtp password cisco
+        Core-SW2(config)# vtp mode client
+    2.2 Trunk tất cả links còn lại giữa switches (Core ↔ Core):
+    * BƯỚC 2: CẤU HÌNH ETHERCHANNEL & TRUNK GIỮA 2 CORE-SW
+        Core-SW1-2(config)# interface range ethernet 0/1 - 2
+        Core-SW1-2(config-range)# channel-group 1 mode desirable      - Mode desirable chủ động gửi bản tin
+        Core-SW1-2(config-range)# no shutdown
+        Core-SW1-2(config-range)# exit
+        Core-SW1-2(config)# interface port-channel 1
+        Core-SW1-2(config-if)# switchport trunk encapsulation dot1q
+        Core-SW1-2(config-if)# switchport mode trunk
+        Core-SW1-2(config-if)# switchport trunk native vlan 1
+        Core-SW1-2(config-if)# switchport trunk allowed vlan 10,20,30,40,50
+        Core-SW1-2(config-if)# no shutdown
+        Core-SW1-2(config-if)# exit
+
+        Core-SW1(config)# interface ethernet 1/0
+        Core-SW1(config-if)# switchport trunk encapsulation dot1q
+        Core-SW1(config-if)# switchport mode trunk
+        Core-SW1(config-if)# switchport trunk native vlan 1
+        *Core-SW1(config-if)# switchport trunk allowed vlan 10,20,30,40,50  (Cấu hình này có cần không)
+        Core-SW1(config-if)# no shutdown
+        Core-SW1(config-if)# exit
+        Core-SW1(config)# interface ethernet 1/2
+        Core-SW1(config-if)# switchport trunk encapsulation dot1q
+        Core-SW1(config-if)# switchport mode trunk
+        Core-SW1(config-if)# switchport trunk native vlan 1
+        *Core-SW1(config-if)# switchport trunk allowed vlan 10,20,30,40,50  (Cấu hình này có cần không)
+        Core-SW1(config-if)# no shutdown
+        Core-SW1(config-if)# exit
+        Core-SW1(config)# interface ethernet 1/3
+        Core-SW1(config-if)# switchport trunk encapsulation dot1q
+        Core-SW1(config-if)# switchport mode trunk
+        Core-SW1(config-if)# switchport trunk native vlan 1
+        *Core-SW1(config-if)# switchport trunk allowed vlan 10,20,30,40,50  (Cấu hình này có cần không)
+        Core-SW1(config-if)# no shutdown
+        Core-SW1(config-if)# exit
+
+        Core-SW2(config)# interface ethernet 1/0
+        Core-SW2(config-if)# switchport trunk encapsulation dot1q
+        Core-SW2(config-if)# switchport mode trunk
+        Core-SW2(config-if)# switchport trunk native vlan 1
+        *Core-SW1(config-if)# switchport trunk allowed vlan 10,20,30,40,50  (Cấu hình này có cần không)
+        Core-SW2(config-if)# no shutdown
+        Core-SW2(config-if)# exit
+        Core-SW2(config)# interface ethernet 1/2
+        Core-SW2(config-if)# switchport trunk encapsulation dot1q
+        Core-SW2(config-if)# switchport mode trunk
+        Core-SW2(config-if)# switchport trunk native vlan 1
+        *Core-SW1(config-if)# switchport trunk allowed vlan 10,20,30,40,50  (Cấu hình này có cần không)
+        Core-SW2(config-if)# no shutdown
+        Core-SW2(config-if)# exit
+        Core-SW2(config)# interface ethernet 1/3
+        Core-SW2(config-if)# switchport trunk encapsulation dot1q
+        Core-SW2(config-if)# switchport mode trunk
+        Core-SW2(config-if)# switchport trunk native vlan 1
+        *Core-SW1(config-if)# switchport trunk allowed vlan 10,20,30,40,50  (Cấu hình này có cần không)
+        Core-SW2(config-if)# no shutdown
+        Core-SW2(config-if)# exit
+    * BƯỚC 3: Cấu hình Trunk giới hạn giữa các Switch Access
+        Trên SW-Access2 và SW-Access3:
+            SW-Access2-3(config)# interface ethernet 0/1
+            SW-Access2-3(config-if)# switchport trunk encapsulation dot1q
+            SW-Access2-3(config-if)# switchport mode trunk
+            SW-Access2-3(config-if)# switchport trunk allowed vlan 20,30
+            SW-Access2-3(config-if)# exit
+        Trên SW-Access4 và SW-Access5:
+            SW-Access4-5(config)# interface ethernet 0/1
+            SW-Access4-5(config-if)# switchport trunk encapsulation dot1q
+            SW-Access4-5(config-if)# switchport mode trunk
+            SW-Access4-5(config-if)# switchport trunk allowed vlan 40,50
+            SW-Access4-5(config-if)# exit
+
+        SW-Access1(config)# interface ethernet 0/1
+        SW-Access1(config-if)# switchport trunk encapsulation dot1q
+        SW-Access1(config-if)# switchport mode trunk
+        *SW-Access1(config-if)# switchport trunk allowed vlan 10 (Cấu hình này có cần không)
+        SW-Access1(config-if)# no shutdown
+        SW-Access1(config-if)# exit
+
+        SW-Access2(config)# interface ethernet 0/2
+        SW-Access2(config-if)# switchport trunk encapsulation dot1q
+        SW-Access2(config-if)# switchport mode trunk
+        *SW-Access2(config-if)# switchport trunk allowed vlan 20 (Cấu hình này có cần không)
+        SW-Access2(config-if)# no shutdown
+        SW-Access2(config-if)# exit
+
+        SW-Access3(config)# interface ethernet 0/3
+        SW-Access3(config-if)# switchport trunk encapsulation dot1q
+        SW-Access3(config-if)# switchport mode trunk
+        *SW-Access3(config-if)# switchport trunk allowed vlan 30 (Cấu hình này có cần không)
+        SW-Access3(config-if)# no shutdown
+        SW-Access3(config-if)# exit
+
+        SW-Access4(config)# interface ethernet 0/2
+        SW-Access4(config-if)# switchport trunk encapsulation dot1q
+        SW-Access4(config-if)# switchport mode trunk
+        *SW-Access4(config-if)# switchport trunk allowed vlan 40 (Cấu hình này có cần không)
+        SW-Access4(config-if)# no shutdown
+        SW-Access4(config-if)# exit
+
+        SW-Access5(config)# interface ethernet 0/3
+        SW-Access5(config-if)# switchport trunk encapsulation dot1q
+        SW-Access5(config-if)# switchport mode trunk
+        *SW-Access5(config-if)# switchport trunk allowed vlan 50 (Cấu hình này có cần không)
+        SW-Access5(config-if)# no shutdown
+        SW-Access5(config-if)# exit
+
+        SW-Access6(config)# interface ethernet 0/1
+        SW-Access6(config-if)# switchport trunk encapsulation dot1q
+        SW-Access6(config-if)# switchport mode trunk
+        *SW-Access6(config-if)# switchport trunk allowed vlan 30 (Cấu hình này có cần không)
+        SW-Access6(config-if)# no shutdown
+        SW-Access6(config-if)# exit
+BÀI 3: STP LOAD BALANCING (nhớ thêm secondary)
+    Core-SW1(config)# spanning-tree vlan 10 root primary
+    Core-SW1(config)# spanning-tree vlan 20 root primary
+    Core-SW1(config)# spanning-tree vlan 30 root primary
+    Core-SW1(config)# exit
+    Core-SW2(config)# spanning-tree vlan 40 root primary
+    Core-SW2(config)# spanning-tree vlan 50 root primary
+    Core-SW2(config)# exit
+    Core-SW1-2# show spanning-tree vlan 10          - Để kiểm tra đúng Root Bridge
+BÀI 4: INTER-VLAN ROUTING – ROUTER-ON-A-STICK TRÊN R1 
+    Task 4.1: Cấu hình Trunk trên Core-SW1
+        Core-SW1(config)# interface ethernet 0/0
+        Core-SW1(config-if)# switchport trunk encapsulation dot1q
+        Core-SW1(config-if)# switchport mode trunk
+        Core-SW2(config-if)# switchport trunk native vlan 1
+        Core-SW1(config-if)# switchport trunk allowed vlan 10,20,30
+        Core-SW1(config-if)# no shutdown
+        Core-SW1(config-if)# exit
+    Task 4.2: Inter-VLAN Routing trên R2 
+        R2(config)# interface ethernet 0/0
+        R2(config-if)# no shutdown
+        R2(config-if)# exit
+        R2(config)# interface ethernet 0/0.10
+        R2(config-subif)# encapsulation dot1Q 10
+        R2(config-subif)# ip address 172.16.10.2 255.255.255.0
+        R2(config-subif)# exit
+        R2(config)# interface ethernet 0/0.20
+        R2(config-subif)# encapsulation dot1Q 20
+        R2(config-subif)# ip address 172.16.20.2 255.255.255.0
+        R2(config-subif)# exit
+        R2(config)# interface ethernet 0/0.30
+        R2(config-subif)# encapsulation dot1Q 30
+        R2(config-subif)# ip address 172.16.30.2 255.255.255.0
+        R2(config-subif)# exit
+    Task 4.3: Inter-VLAN Routing trên R3
+        Core-SW2(config)# interface ethernet 0/0
+        Core-SW2(config-if)# switchport trunk encapsulation dot1q
+        Core-SW2(config-if)# switchport mode trunk
+        Core-SW2(config-if)# switchport trunk native vlan 1
+        Core-SW2(config-if)# switchport trunk allowed vlan 40,50
+        Core-SW2(config-if)# no shutdown
+        Core-SW2(config-if)# exit
+        R3(config)# interface ethernet 0/0
+        R3(config-if)# no shutdown
+        R3(config-if)# exit
+        R3(config)# interface ethernet 0/0.40
+        R3(config-subif)# encapsulation dot1Q 40
+        R3(config-subif)# ip address 172.16.40.3 255.255.255.0
+        R3(config-subif)# exit
+        R3(config)# interface ethernet 0/0.50
+        R3(config-subif)# encapsulation dot1Q 50
+        R3(config-subif)# ip address 172.16.50.3 255.255.255.0
+        R3(config-subif)# exit
+    Task 4.4: Gán IP cho end devices
+        • VPC (VLAN 10): IP 172.16.10.10/24     172.16.10.2
+        • Server (VLAN 20): IP 172.16.20.10/24  172.16.20.2
+        • PC3 (VLAN 40): IP 172.16.40.10/24     172.16.40.3
+        • VPC (VLAN 50): IP 172.16.50.10/24     172.16.50.3
+BÀI 5: DHCP CHO VOICE VLAN
+    - Cấu hình DHCP Server trên Router R2
+        R2(config)# ip dhcp excluded-address 172.16.30.1 172.16.30.9
+        R2(config)# ip dhcp pool VOICE
+        R2(config-dhcp)# network 172.16.30.0 255.255.255.0
+        R2(config-dhcp)# default-router 172.16.30.2
+        R2(config-dhcp)# option 150 ip 172.16.30.2
+        R2(config-dhcp)# exit
+    - Cấu hình DHCP Snooping để bảo mật mạng Voice
+        + Trên Core-SW1:
+            Core-SW1(config)# ip dhcp snooping
+            Core-SW1(config)# ip dhcp snooping vlan 30
+            Core-SW1(config)# no ip dhcp snooping information option
+            Core-SW1(config)# interface ethernet 0/0
+            Core-SW1(config-if)# ip dhcp snooping trust
+            Core-SW1(config-if)# exit
+            Core-SW1(config)# interface port-channel 1
+            Core-SW1(config-if)# ip dhcp snooping trust
+            Core-SW1(config-if)# exit
+        + Trên Core-SW2:
+            Core-SW2(config)# ip dhcp snooping
+            Core-SW2(config)# ip dhcp snooping vlan 30
+            Core-SW2(config)# no ip dhcp snooping information option
+            Core-SW2(config)# interface port-channel 1
+            Core-SW2(config-if)# ip dhcp snooping trust
+            Core-SW2(config-if)# exit
+        + Trên SW-Access3:
+            SW-Access3(config)# ip dhcp snooping
+            SW-Access3(config)# ip dhcp snooping vlan 30
+            SW-Access3(config)# no ip dhcp snooping information option
+            SW-Access3(config)# interface ethernet 0/3
+            SW-Access3(config-if)# ip dhcp snooping trust
+            SW-Access3(config-if)# exit
+        + Trên SW-Access6:
+            SW-Access6(config)# ip dhcp snooping
+            SW-Access6(config)# ip dhcp snooping vlan 30
+            SW-Access6(config)# no ip dhcp snooping information option
+            SW-Access6(config)# interface ethernet 0/1
+            SW-Access6(config-if)# ip dhcp snooping trust
+            SW-Access6(config-if)# exit
+        + PC2 và PC5: chuyển sang chế độ DHCP để xin IP
+BÀI 6: OSPF FOUNDATION VÀ OPTIMIZATION
+    - Cấu hình Loopback Interfaces (Bắt buộc trước OSPF)
+        + Trên R1:
+            R1(config)# interface loopback 0
+            R1(config-if)# ip address 1.1.1.1 255.255.255.255
+            R1(config-if)# exit
+        + Trên R2:
+            R2(config)# interface loopback 0
+            R2(config-if)# ip address 2.2.2.2 255.255.255.255
+            R2(config-if)# exit
+        + Trên R3:
+            R3(config)# interface loopback 0
+            R3(config-if)# ip address 3.3.3.3 255.255.255.255
+            R3(config-if)# exit
+        + Trên ISP:
+            ISP(config)# interface loopback 0
+            ISP(config-if)# ip address 4.4.4.4 255.255.255.255
+            ISP(config-if)# exit
+    - Cấu hình OSPF Process 1 và Router-ID thủ công
+        + Trên R1 (Nối R2 qua e0/1, nối R3 qua e0/2, nối ISP qua e0/0)
+            R1(config)# router ospf 1
+            R1(config-router)# router-id 1.1.1.1
+            R1(config-router)# passive-interface default
+            R1(config-router)# no passive-interface ethernet 0/0
+            R1(config-router)# no passive-interface ethernet 0/1
+            R1(config-router)# no passive-interface ethernet 0/2
+            R1(config-router)# network 172.16.0.0 0.0.255.255 area 0
+            R1(config-router)# exit
+            R1(config)# interface range ethernet 0/0 - 2
+            R1(config-if-range)# ip ospf network point-to-point
+            R1(config-if-range)# exit
+        + Trên R2 (Nối R1 qua e0/1, nối R3 qua e0/2, nối Remote_Server qua e0/3, chạy sub-interface e0/0.x xuống LAN)
+            R2(config)# router ospf 1
+            R2(config-router)# router-id 2.2.2.2
+            R2(config-router)# passive-interface default
+            R2(config-router)# no passive-interface ethernet 0/1
+            R2(config-router)# no passive-interface ethernet 0/2
+            R2(config-router)# network 172.16.0.0 0.0.255.255 area 0
+            R2(config-router)# exit
+            R2(config)# interface range ethernet 0/1 - 2
+            R2(config-if-range)# ip ospf network point-to-point
+            R2(config-if-range)# exit
+        + Trên R3 (Nối R1 qua e0/2, nối R2 qua e0/1, chạy sub-interface e0/0.x xuống LAN):
+            R3(config)# router ospf 1
+            R3(config-router)# router-id 3.3.3.3
+            R3(config-router)# passive-interface default
+            R3(config-router)# no passive-interface ethernet 0/1
+            R3(config-router)# no passive-interface ethernet 0/2
+            R3(config-router)# network 172.16.0.0 0.0.255.255 area 0
+            R3(config-router)# exit
+            R3(config)# interface range ethernet 0/1 - 2
+            R3(config-if-range)# ip ospf network point-to-point
+            R3(config-if-range)# exit
+        + Trên ISP (Nối R1 qua e0/0):
+            ISP(config)# router ospf 1
+            ISP(config-router)# router-id 4.4.4.4
+            ISP(config-router)# passive-interface default
+            ISP(config-router)# no passive-interface ethernet 0/0
+            ISP(config-router)# network 200.0.0.0 0.0.0.255 area 0
+            ISP(config-router)# exit
+            ISP(config)# interface ethernet 0/0
+            ISP(config-if)# ip ospf network point-to-point
+            ISP(config-if)# exit
+    - Tối ưu đường đi (OSPF Cost Optimization)
+        + Cấu hình trên R3: Mặc định các cổng Ethernet có cost giống nhau. Để ép traffic đi qua R2, ta phải vào cổng nối trực tiếp từ R3 sang R1 (e0/2) và tăng OSPF Cost lên cao (ví dụ: 100). Cổng nối sang R2 (e0/1) giữ nguyên cost mặc định (thường là 10).
+            R3(config)# interface ethernet 0/2
+            R3(config-if)# ip ospf cost 100
+            R3(config-if)# exit
+BÀI 7: PORT SECURITY
+    - Trên SW-Access2:
+        SW-Access2(config)# interface ethernet 0/0
+        ** Chuyển cổng sang trạng thái access port cố định (bắt buộc trước khi bật port security) **
+        SW-Access2(config-if)# switchport mode access
+        ** Kích hoạt tính năng Port Security trên cổng này **
+        SW-Access2(config-if)# switchport port-security
+        ** Giới hạn tối đa chỉ cho phép 1 địa chỉ MAC duy nhất được kết nối **
+        SW-Access2(config-if)# switchport port-security maximum 1
+        ** Cấu hình tính năng Mac Sticky để Switch tự động học và lưu địa chỉ MAC của Server hiện tại vào cấu hình **
+        SW-Access2(config-if)# switchport port-security mac-address sticky
+        ** Cấu hình chế độ vi phạm (Violation) là Restrict: Chặn traffic lạ, ghi nhận lỗi vào log nhưng KHÔNG tắt cổng **
+        SW-Access2(config-if)# switchport port-security violation restrict
+        SW-Access2(config-if)# exit
+    - Cách kiểm tra:
+        + Bạn vào phần cấu hình của thiết bị đang nối vào cổng e0/0 (máy Server) để thay đổi địa chỉ MAC của nó thành một địa chỉ ngẫu nhiên khác.
+        + Thực hiện lệnh ping từ Server vào mạng. Kết quả mong muốn là lệnh ping phải thất bại (Request timeout) do Switch đã chặn (drop) traffic.
+        + SW-Access2# show port-security interface ethernet 0/0
+BÀI 8: ACCESS CONTROL LISTS (ACL)
+    - Standard ACL: Lọc traffic trên Router ISP (access-list 10)
+    - Yêu cầu: Cấm VLAN 10, VLAN 20, VLAN 30 và dải mạng 172.16.22.0/24. Cho phép các VLAN còn lại đi qua.
+        + Cấu hình trên ISP:
+            ISP# configure terminal
+            ISP(config)# access-list 10 deny 172.16.10.0 0.0.0.255
+            ISP(config)# access-list 10 deny 172.16.20.0 0.0.0.255
+            ISP(config)# access-list 10 deny 172.16.30.0 0.0.0.255
+            ISP(config)# access-list 10 deny 172.16.22.0 0.0.0.255
+            ISP(config)# access-list 10 permit any
+            ** Áp dụng ACL vào cổng nhận traffic từ mạng nội bộ (cổng e0/0 nối về R1) **
+            ISP(config)# interface ethernet 0/0
+            ISP(config-if)# ip access-group 10 in
+            ISP(config-if)# exit
+    - Extended ACL: Kiểm soát VLAN 20 truy cập dịch vụ trên Remote_Server (Cấu hình trên R2)
+    - Yêu cầu: Cho phép VLAN 20 (172.16.20.0/24) truy cập dịch vụ HTTP (Port 80) trên Remote_Server (172.16.22.10). Chặn tất cả dịch vụ TCP/UDP khác từ VLAN 20 đến Server này.
+        + Cấu hình trên R2:
+            R2# configure terminal
+            R2(config)# ip access-list extended VLAN20_TO_SERVER
+            R2(config-ext-nacl)# permit tcp 172.16.20.0 0.0.0.255 host 172.16.22.10 eq 80
+            R2(config-ext-nacl)# deny tcp 172.16.20.0 0.0.0.255 host 172.16.22.10
+            R2(config-ext-nacl)# deny udp 172.16.20.0 0.0.0.255 host 172.16.22.10
+            R2(config-ext-nacl)# permit ip any any
+            R2(config-ext-nacl)# exit
+            ** Gắn vào cổng Sub-interface của VLAN 20 theo chiều đi vào router R2 **
+            R2(config)# interface ethernet 0/0.20
+            R2(config-subif)# ip access-group VLAN20_TO_SERVER in
+            R2(config-subif)# exit
+
+    - Extended ACL: Điều hướng ICMP một chiều
+    - Yêu cầu: Chặn PC1 (172.16.10.10) ping đến Remote_Server (172.16.22.10), nhưng cho phép Remote_Server ping ngược lại PC1 thành công. (Sử dụng tính năng kiểm tra trạng thái kết nối established hoặc lọc loại tin nhắn ICMP Echo).
+        + Cấu hình trên R2
+            R2# configure terminal
+            R2(config)# ip access-list extended BLOCK_PC1_PING_SERVER
+            ** Chặn gói tin ICMP Echo (ping đi) từ PC1 gửi tới Server **
+            R2(config-ext-nacl)# deny icmp host 172.16.10.10 host 172.16.22.10 echo
+            ** Cho phép các gói tin ICMP khác (bao gồm cả gói phản hồi echo-reply nếu có) **
+            R2(config-ext-nacl)# permit ip any any
+            R2(config-ext-nacl)# exit
+            ** Gắn vào cổng Sub-interface của VLAN 10 trên R2 **
+            R2(config)# interface ethernet 0/0.10
+            R2(config-subif)# ip access-group BLOCK_PC1_PING_SERVER in
+            R2(config-subif)# exit
+BÀI 9: NAT/PAT VÀ DEFAULT ROUTE
+    - Cấu hình PAT Overload và Static NAT trên ISP
+        + Cấu hình trên ISP:
+            ISP# configure terminal
+            ** 9.1: Cấu hình PAT Overload trên interface e0/1 sử dụng access-list 10 **
+            ISP(config)# ip nat inside source list 10 interface ethernet 0/1 overload
+            ** 9.2: Cấu hình Static NAT cho Remote_Desktop ra một IP Public (Ví dụ: IP cổng e0/1 hoặc 200.0.0.10) **
+            ISP(config)# ip nat inside source static 172.16.22.10 200.0.0.10
+            ** Định nghĩa các cổng inside/outside cho NAT **
+            ISP(config)# interface ethernet 0/0
+            ISP(config-if)# ip nat inside
+            ISP(config-if)# exit
+            ISP(config)# interface ethernet 0/1
+            ISP(config-if)# ip nat outside
+            ISP(config-if)# exit
+    - Cấu hình Default Route
+        + Cấu hình trên ISP:
+            ISP(config)# ip route 0.0.0.0 0.0.0.0 10.215.26.1
+            ISP(config)# exit
+        + Cấu hình trên R1 (Router biên nội bộ nối với ISP)
+            R1# configure terminal
+            R1(config)# ip route 0.0.0.0 0.0.0.0 200.0.0.254
+            R1(config)# router ospf 1
+            R1(config-router)# default-information originate
+            R1(config-router)# exit
+BÀI 10: ADVANCED FEATURES
+    - Kích hoạt định tuyến IPv6 toàn cục
+        + Gõ lệnh này trên cả R1, R2, R3
+            Router(config)# ipv6 unicast-routing
+        + Cấu hình trên từng Router (Gán IP & Cấu hình Định tuyến Tĩnh)
+            R1# configure terminal
+            R1(config)# ipv6 unicast-routing
+            R1(config)# interface ethernet 0/1
+            R1(config-if)# ipv6 address 2001:db8:12::1/64
+            R1(config-if)# ipv6 enable
+            R1(config-if)# exit
+            R1(config)# interface ethernet 0/2
+            R1(config-if)# ipv6 address 2001:db8:13::1/64
+            R1(config-if)# ipv6 enable
+            R1(config-if)# exit
+            R1(config)# interface loopback 0
+            R1(config-if)# ipv6 address 2001:db8:1::1/128
+            R1(config-if)# exit
+            ** Cấu hình Static Route IPv6 để R1 biết đường tới Loopback của R2 và R3 **
+            R1(config)# ipv6 route 2001:db8:2::2/128 2001:db8:12::2
+            R1(config)# ipv6 route 2001:db8:3::3/128 2001:db8:13::3
+
+            R2# configure terminal
+            R2(config)# ipv6 unicast-routing
+            R2(config)# interface ethernet 0/1
+            R2(config-if)# ipv6 address 2001:db8:12::2/64
+            R2(config-if)# ipv6 enable
+            R2(config-if)# exit
+            R2(config)# interface ethernet 0/2
+            R2(config-if)# ipv6 address 2001:db8:23::2/64
+            R2(config-if)# ipv6 enable
+            R2(config-if)# exit
+            R2(config)# interface loopback 0
+            R2(config-if)# ipv6 address 2001:db8:2::2/128
+            R2(config-if)# exit
+            ** Cấu hình Static Route IPv6 để R2 biết đường tới Loopback của R1 và R3 **
+            R2(config)# ipv6 route 2001:db8:1::1/128 2001:db8:12::1
+            R2(config)# ipv6 route 2001:db8:3::3/128 2001:db8:23::3
+
+            R3# configure terminal
+            R3(config)# ipv6 unicast-routing
+            R3(config)# interface ethernet 0/2
+            R3(config-if)# ipv6 address 2001:db8:13::3/64
+            R3(config-if)# ipv6 enable
+            R3(config-if)# exit
+            R3(config)# interface ethernet 0/1
+            R3(config-if)# ipv6 address 2001:db8:23::3/64
+            R3(config-if)# ipv6 enable
+            R3(config-if)# exit
+            R3(config)# interface loopback 0
+            R3(config-if)# ipv6 address 2001:db8:3::3/128
+            R3(config-if)# exit
+            ** Cấu hình Static Route IPv6 để R3 biết đường tới Loopback của R1 và R2 **
+            R3(config)# ipv6 route 2001:db8:1::1/128 2001:db8:13::1
+            R3(config)# ipv6 route 2001:db8:2::2/128 2001:db8:23::2
+
+
+
