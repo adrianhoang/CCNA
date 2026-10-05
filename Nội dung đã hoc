@@ -1,0 +1,487 @@
+- Mô hình OSI (7 layers)
+- Mô tình TCP (4 layers)
+- Default Gateway là địa chỉ IP của thiết bị Router/L3 Switch mà PC gửi gói tin đến khi muốn đi ra ngoài mạng của nó.
+- Transport Layer
+    + Segments
+    + TCP
+        * Reliable Delivery (Gửi đáng tin cậy)
+        * Three-way handshake
+        * Window size
+    + UDP
+        * Best-Effort Delivery (Gửi tận lực)
+    + Port Number (16 bit)
+        * Well Known Port (0 -> 1023): được IANA cấp phát, dùng cho các dịch vụ chuẩn như HTTP, HTTPS, DNS, FTP
+        * Register Port (1024 -> 49151): dành cho các ứng dụng đã đăng ký
+        * Dynamic/Private Port (49152 -> 65535): được hệ điều hành cấp phát tạm thời cho các kết nối của client
+- Network layer
+    + Packer
+    + Router
+        * Các thành phần trong Router (CPU, RAM, ROM, Flash, NVRAM, Configuration Register, Interfaces)
+    + IP
+        * Network Id: định danh cho lớp mạng
+        * Host Id: định danh cho từng thiết bị bên trong hệ thống mạng đó
+        * IPv4 (32 bit)
+    + Subnet Mask (32 bit)
+        * Kỹ thuật chia subnet
+- ARP: ARP Request - ARP Reply - ARP Table
+- Data Link Layer
+    + Switch
+        * Frame
+        * MAC (48 bit)
+            # Destination (Địa chỉ MAC đích): 24(Định danh cho nhà sản xuất) | 24(Định danh cho từng card mạng)
+            # Khi 1 con SW mới mua về thì MAC Table sẽ trống - Khi mà có MAC address thì nó sẽ lưu trong 5p
+            # Khi chia VLAN thì MAC Table sẽ hiển thị địa chỉ MAC theo VLAN
+    + LAN
+        * NIC (Network Interface Card)
+    + SOHO LAN
+    + Enterprise LAN
+    + Broadcast Domain
+    + Collision Domain
+        * Cơ chế CSMA/CD
+- CDP
+- LLDP
+- Telnet(port 23) | SSH(port 22)
+    + RSA thuận tóan mã hóa
+- Backup cấu hình và hệ điều hành IOS của Router ra TFTP Server
+- Crack mật khẩu trên Cisco Router
+- Routing overview 
+    + Static Route (Tuyến tĩnh): tuyến đường được cấu hình thủ công bởi quản trị viên mạng
+    + Dynamic Route (Tuyến động): sử dụng các giao thức định tuyến (như RIP, OSPF, EIGRP, BGP...) để tự động học và cập nhật các tuyến đường theo sự thay đổi trong topology hoặc tình trạng lưu lượng mạng.
+    + AD (Administrative Distance): đánh giá độ tin cậy của một nguồn thông tin định tuyến
+    + Cisco IP SLA (công cụ trên thiết bị Cisco dùng để kiểm tra kết nối mạng một cách tự động)
+    + Kết hợp IP SLA + Track + AD giúp định tuyến tĩnh có khả năng dự phòng thông minh.
+- Ping (kiểm tra kết nối mạng giữa hai thiết bị)
+    + Ping sử dụng giao thức ICMP Echo Request và ICMP Echo Reply.
+    + TTL=128: Time To Live - thời gian sống của gói tin 
+- Traceroute (công cụ xác định tuyến đường (path) mà gói tin đi qua từ nguồn đến đích)
+- VLAN (Chia Broadcast Domain)
+    + VLAN: Chia một mạng Switch thành nhiều Broadcast Domain riêng biệt, mỗi VLAN là một Broadcast Domain riêng.
+    + TRUNKING: Trunk là đường link cho phép nhiều VLAN đi qua cùng một đường kết nối.
+        * Trunk sử dụng VLAN Tag (802.1Q) để xác định frame thuộc VLAN nào.
+        * Native VLAN: Frame của Native VLAN đi qua Trunk mà không có VLAN Tag.
+    + VTP: Dùng để quản lý và phân phối thông tin VLAN giữa các Switch.
+        - Server: Tạo, sửa, xóa VLAN và quảng bá thông tin VLAN.
+        - Client: Nhận thông tin VLAN từ Server, không tự tạo/sửa/xóa VLAN.
+        - Transparent: Không đồng bộ VLAN với Server nhưng vẫn chuyển tiếp VTP Advertisement.
+    + Access port: Một Access port thường dùng để kết nối thiết bị đầu cuối
+    + Spanning-tree portfast: 
+        * Cho phép Access Port chuyển sang trạng thái Forwarding nhanh hơn
+        * Bỏ qua các bước Listening và Learning của STP
+        * Thường dùng cho port kết nối thiết bị đầu cuối như PC
+- Router on a Stick (ROAS): 
+    + Dùng 1 cổng vật lý của Router nối với Switch bằng đường Trunk để định tuyến giữa nhiều VLAN.
+    + Sub-interface: Mỗi Sub-interface trên Router tương ứng với một VLAN và có một IP Gateway riêng.
+    + Native VLAN: Cấu hình Sub-interface xử lý VLAN 1 và xác định VLAN 1 là Native VLAN trên đường trunk
+- Layer 3 Switch SVI (Switch Virtual Interface)
+    + Tạo một Interface VLAN (SVI) trên Layer 3 Switch để làm Gateway cho các thiết bị trong VLAN.
+    + Mỗi VLAN có thể có một SVI và một địa chỉ IP Gateway riêng.
+    + Layer 3 Switch có thể định tuyến giữa các VLAN mà không cần Router.
+    + Cần bật `ip routing` để Layer 3 Switch thực hiện chức năng Routing.
+- DHCP (Dynamic Host Configuration Protocol):
+    + Tự động cấp phát IP, Subnet Mask, Default Gateway và DNS cho các thiết bị trong mạng.
+    + DHCP Server quản lý một DHCP Pool và cấp IP cho Client.
+    + Các Client gửi yêu cầu DHCP để nhận thông tin cấu hình mạng tự động.
+    + Quản lý và thu hồi IP address không sử dụng
+    + Quá trình cấp IP của DHCP Server:
+        * DHCP Server: sẽ gửi 2 bản tin Offer và ACK
+        * PC đi xin IP: sẽ gửi 2 bản tin Discover và Request
+    + Bảo mật DHCP (XEM KỸ các tấn công liên quan [Các kỹ thuật bảo mật Layer 2])
+- IP Helper Address - giải quyết vấn đề DHCP trong môi trường multi-VLAN
+    + Chuyển đổi DHCP broadcast thành unicast
+    + Forward unicast packet đến DHCP server
+- STP (Spanning Tree Protocol): Giải quyết vấn đề Loop ở Layer 2
+    + Giai đoạn 1: Bầu chọn Root Bridge
+        * Switch có Bridge ID thấp nhất sẽ được chọn làm Root Bridge.
+        * Bridge ID = Bridge Priority + MAC Address.
+        * Priority mặc định = 32768.
+        * Nếu Priority giống nhau → Switch có MAC Address thấp nhất được chọn.
+        * Các Switch trao đổi BPDU để xác định Root Bridge.
+        * BPDU Hello mặc định được gửi mỗi 2 giây
+    + Giai đoạn 2: Bầu chọn Root Port
+        * Mỗi Switch không phải Root Bridge sẽ chọn 1 Root Port.
+        * Root Port là Port có đường đi tốt nhất/chi phí thấp nhất đến Root Bridge.
+        * STP sử dụng Path Cost để xác định đường đi tốt nhất.
+        * Khi tính Root Path Cost: Chi phí của các đường link trên đường đi được cộng dồn.
+    + Giai đoạn 3: Bầu chọn Designated Port
+        * Mặc định các Port của SW(Root Bridge) đều là Designated Port.
+        * Designated Port gửi bản tin Hello để STP cảm nhận có sự thay đổi của hệ thống mạng không
+        * Xác định phân đoạn mạng cuối cùng làm Designated Port dựa vào Root Past Cost hoặc Bridge Id thấp hơn
+        * Port không được chọn làm RP hoặc DP sẽ trở thành Alternate Port và bị Block.
+    + STP Port States:
+        * Disabled    → Port bị tắt.
+        * Blocking    → Không Forward Frame, chỉ nhận BPDU.
+        * Listening   → Xác định topology, chưa học MAC.
+        * Learning    → Học MAC Address, chưa Forward Data Frame.
+        * Forwarding  → Học MAC và Forward Data Frame.
+    + STP PortFast:
+        * Cho phép Access Port chuyển nhanh sang trạng thái Forwarding.
+        * Bỏ qua thời gian Listening và Learning.
+        * Thường dùng cho Port kết nối PC/thiết bị đầu cuối.
+        * Không nên dùng PortFast cho các Port kết nối giữa Switch.
+- PVST+ (Per-VLAN Spanning Tree Plus):
+    + Giao thức STP độc quyền của Cisco.
+    + Tạo một STP Instance riêng cho từng VLAN.
+    + Mỗi VLAN có thể có Root Bridge khác nhau.
+    + Cho phép cân bằng tải Layer 2 giữa các VLAN.
+- EtherChannel:
+    + Gộp nhiều đường link vật lý thành một đường link logic duy nhất.
+    + Tăng Bandwidth và tạo Redundancy.
+    + STP xem EtherChannel như một đường link logic → tránh việc STP Block từng đường link vật lý trong nhóm.
+    + Các port trong cùng EtherChannel phải có cấu hình tương thích.
+    + Khi một port trong EtherChannel bị down → traffic được chuyển qua các port còn lại.
+    + EtherChannel có thể sử dụng tối đa 8 port active trong một nhóm (tùy thiết bị/IOS).
+    + Có thể cấu hình EtherChannel bằng cách sử dụng:
+        * LACP → Chuẩn IEEE 802.3ad/802.1AX:
+            * Mode active: Chủ động gửi LACP để thương lượng EtherChannel.
+            * Mode passive: Chờ thiết bị bên kia gửi LACP, không chủ động gửi.
+        * PAgP → Giao thức độc quyền của Cisco:
+            * Mode desirable: Chủ động gửi PAgP để thương lượng EtherChannel.
+            * Mode auto: Chờ thiết bị bên kia chủ động gửi PAgP.
+- HSRP(Hot Standby Router Protocol): Cung cấp khả năng dự phòng Default Gateway cho các Host.
+    + Giao thức độc quyền của Cisco, hoạt động ở Layer 3
+    + HSRP tạo ra một Virtual IP và Virtual MAC để làm Default Gateway ảo.
+    + Host chỉ cần cấu hình Virtual IP làm Default Gateway → không cần biết Router Active/Standby là Router nào.
+    + HSRP yêu cầu tối thiểu hai thiết bị Router tham gia: 
+        * Router (Active): chịu trách nhiệm chuyển tiếp gói tin, thiết bị đang hoạt động chính
+        * Router (Standby): ở trạng thái dự phòng - theo dõi Active - Khi Active bị lỗi → Standby tiếp quản Virtual IP/MAC
+    + Bầu chọn và Tính năng Giành quyền (Preemption)
+        * Router có Priority cao nhất sẽ trở thành Active - Priority mặc định = 100.
+        * Nếu Priority bằng nhau → Router có địa chỉ IP cao hơn sẽ được chọn.
+        * Standby là Router có Priority cao thứ hai.
+    + Preempt
+        * Cho phép Router có Priority cao hơn giành lại quyền Active khi Router đó hoạt động trở lại
+        * Mặc định HSRP không bật Preempt - Mà chúng ra tự cấu hình: standby 1 preempt
+    + Timers
+        * Hello: thời gian Active gửi bản tin HSRP Hello.
+        * Hold: thời gian Standby chờ trước khi xác định Active bị lỗi.
+        * Mặc định:
+            - Hello = 3 giây
+            - Hold = 10 giây
+    + Track
+        * Theo dõi trạng thái của một Interface hoặc đối tượng.
+        * Nếu đường kết nối quan trọng bị lỗi → giảm Priority của Router.
+        * Giúp Router Standby có thể trở thành Active khi đường đi chính bị lỗi.
+    + Cấu hình HSRP trên phân đoạn mạng, broadcast domain: tạo ra default gateway ảo
+    + Cấu hình HSRP trên Sub-interface: tạo ra default gateway ảo
+- VRRP (Virtual Router Redundancy Protocol):
+    + Chuẩn mở (Standard), không độc quyền Cisco.
+    + Dùng để tạo Default Gateway ảo và cung cấp Gateway Redundancy.
+    + Tương tự HSRP nhưng có thể sử dụng với thiết bị của nhiều hãng.
+    + Có:
+        * Master Router → Router đang chuyển tiếp traffic.
+        * Backup Router → Router dự phòng.
+    + Router có Priority cao nhất sẽ trở thành Master.
+    + Priority mặc định = 100.
+    + Virtual IP được sử dụng làm Default Gateway cho Host.
+- Kỹ thuật bảo mật Port Security: Bảo vệ Access Port bằng cách kiểm soát MAC Address.
+    + Port Security hoạt động trên Access Port, thường dùng để bảo vệ các Port kết nối PC/thiết bị đầu cuối.
+    + Nguyên lý hoạt động của Switch: Tại một thời điểm, một địa chỉ MAC chỉ được ánh xạ tới một port duy nhất trong MAC table.
+    + Nếu không bật Port Security: (XEM KỸ các tấn công liên quan [Các kỹ thuật bảo mật Layer 2])
+        * Kẻ tấn công có thể kết nối vào switch và gửi các gói tin giả mạo địa chỉ MAC nguồn trùng với MAC của Router (Default Gateway)
+        * Lúc này, switch sẽ cập nhật MAC table và hiểu lầm rằng Router đang nằm ở cổng của kẻ tấn công.
+        * Khi các PC hợp lệ trong mạng gửi dữ liệu ra Internet (với MAC đích là MAC của Router), switch sẽ điều hướng toàn bộ lưu lượng đó về phía thiết bị của kẻ tấn công thay vì gửi đến Router thật.
+    + Giới hạn số lượng MAC Address được phép xuất hiện trên một Port.
+    + Có thể chỉ định MAC Address được phép kết nối hoặc cho Switch tự học MAC Address.
+    + Các kiểu học MAC Address:
+        * Static: Cấu hình thủ công MAC Address được phép trên Port.
+        * Dynamic: Switch tự động học MAC Address, MAC sẽ mất khi Switch khởi động lại.
+        * Sticky: Switch tự học MAC Address và lưu MAC vào Running-Config.
+    + Maximum: Giới hạn số MAC được phép trên Port. Tối đa 128 thiết bị (tùy theo thiết bị Switch)
+    + Violation: xử lý như thế nào khi Port nhận MAC Address không được phép.
+        * Protect:
+            - Loại bỏ các frame từ MAC Address vi phạm.
+            - Không gửi thông báo Syslog/SNMP.
+            - Port vẫn hoạt động.
+        * Restrict:
+            - Loại bỏ các frame từ MAC Address vi phạm.
+            - Có thể gửi Syslog/SNMP và tăng bộ đếm vi phạm.
+            - Port vẫn hoạt động.
+        * Shutdown:
+            - Port bị đưa vào trạng thái Err-disabled khi xảy ra vi phạm.
+            - Đây là chế độ mặc định.
+            - Muốn Port hoạt động lại phải xử lý lỗi và đưa Port lên lại.
+- Các kỹ thuật bảo mật Layer 2 và những nguy cơ tấn công mạng LAN
+    + Tính năng Port Security sẽ chống lại các nguy cơ sau:
+        * Tấn công bảng CAM (CAM Table Overflow Attack):
+            # Kẻ tấn công gửi một lượng lớn frame Ethernet với các địa chỉ MAC nguồn giả mạo đến switch.
+            # Mục tiêu là làm đầy bảng CAM, khiến switch không thể lưu thêm các địa chỉ MAC hợp lệ.
+            # Khi bảng CAM bị tràn, switch chuyển sang chế độ hoạt động như một hub, gửi tất cả các frame đến mọi cổng flooding.
+        * Giả mạo MAC address (MAC Address Spoofing)
+        * Lỗ hổng bảo mật 802.1x: 
+            # Lợi dụng thiết bị Hub để vượt qua bảo mật 802.1X của Switch
+        * Tấn công chức năng DHCP Server: Ví dụ DHCP Server cấp được 30 IP
+            # Kẻ tấn công sẽ gửi bản tin với MAC X để xin IP.
+            # DHCP server thấy có MAC address xin IP, sẽ cấp IP cho MAC này.
+            # Kẻ tấn công sẽ gửi nhiều MAC address để xin IP. Cho đến khi DHCP server hết khả năng cấp IP.
+            # Lúc này PC hợp lệ xin IP, nhưng không còn IP nữa thì PC không có khả năng truy cập Internet.
+        * DHCP Snooping:
+            # Kẻ tấn công sẽ cài chương trình DHCP Server để cấp IP cho các PC của người dùng.
+            # Thay vì cấp đúng dãi 192.168.1.10 - 200 thì đối tượng tấn công sẽ cấp 172.16.1.10 - 200
+            # Câu lệnh bật DHCP Snooping: 
+                @ SW: ip dhcp snooping          - Bật trên SW
+                @ SW: ip dhcp snooping vlan 10  - Áp dụng cho Vlan 10
+            # Mặc định tất cả các Port trên SW thuộc Vlan 10 khi bật DHCP Snooping đều là UNTRUSTED
+            # Để bật Port lên thành TRUSTED thực hiện câu lệnh:
+                @ SW: ip dhcp snooping trust
+            # Đối với Port mà kết nối với DHCP Server THẬT SỰ thì bật tình năng TRUSTED 
+                @ Trên Port TRUSTED cho phép gửi bản tin Offer và ACK để cấp IP cho các PC
+            # Đối với Port mà kết nối với các PC thông thường thì bật tính năng UNTRUSTED
+                @ Trên Port UNTRUSTED chỉ cấp nhận bản tin Discover và Request
+        * Tấn công DTP VLAN Hooping:
+            # Kẻ tấn công dùng PC kết nối với SW chỉ truy cập được VLAN 10
+            # Tuy nhiên kẻ tấn công sẽ sử dụng lỗ hổng bảo mật DTP tự động thương lượng Trunk để truy cập VLAN khác
+            # Do đó cần tắt DTP đi ở port kết nối với PC: switchport nonegotiate or switchport mode access
+        * STP Manipulation BPDU Guard: Cơ chế bầu chọn Spanning-tree
+            # Kẻ tấn công sẽ sử dụng chương trình Yersinia để tuyên bố nó là Root Bridge
+            # Thành ra làm ảnh hưởng đến Spanning-tree hiện tại
+            # Từ đó mọi lưu lượng từ các PC đều đổ về kẻ tấn công
+            # Do đó cần sử dụng BPDU GUARD ở port kết nối với PC: spanning-tree bpduguard enable
+        * Tấn công ARP (Spoofing / Poisoning)
+            # ARP là giao thức ánh xạ địa chỉ IP sang địa chỉ MAC trong mạng Lớp 2
+            # Kẻ tấn công sẽ gửi ARP Request (ai có địa chỉ IP X?) đến toàn mạng
+            # Thiết bị có IP đó trả lời bằng ARP Reply với địa chỉ MAC của mình
+            # Thông tin được lưu trong bảng ARP Cache (ví dụ: IP 192.168.10.1 -> MAC EE:EE:EE:EE:EE:EE)
+            # ARP không được mã hóa và không có cơ chế xác thực, tạo lỗ hổng cho tấn công.
+            # Cấu hình DAI để ngăn chặn hoạt động tấn công giả mạo ARP
+- Tính năng Port Security: Bảo mật cổng vật lý - (XEM KỸ Ở [Kỹ thuật bảo mật Port Security])
+- Tính năng BPDU Gurad: Bảo vệ giao thức STP (Spanning Tree Protocol) - (XEM KỸ Ở [STP Manipulation BPDU Guard])
+- Tính năng DHCP Snooping: (XEM KỸ Ở [DHCP Snooping])
+- Tính năng IP Source Guard: Bảo vệ nguồn IP
+    + Hoạt động ở Layer 2 nhưng kiểm tra thông tin Layer 3 (Địa chỉ IP nguồn)
+    + Khi cấu hình IP Source sẽ đảm bảo các PC kết nối vào các Port của SW phải sử dụng đúng IP được DHCP cấp
+    + Nếu sử dụng IP tĩnh tự cấu hình (Static), PC sẽ không trao đổi dữ liệu
+    + Câu lệnh: ip verify source
+- Tính năng DAI (Dymanic ARP Inspection): XEM KỸ Ở [Tấn công ARP])
+    + Cấu hình DAI để ngăn chặn hoạt động tấn công giả mạo ARP
+        @ Câu lệnh SW: ip arp inspection vlan 10  - Bật tính năng DAI cho Vlan 10 trên SW
+    + Khi cấu hình sẽ 2 loại Port trên SW là TRUSTED và UNTRUSTED (tương tự như DHCP Snooping)
+    + Mặc định tất cả các Port trên SW khi bật DAI đều là UNTRUSTED
+    + Bật TRUSTED lên cho Port kết nối với server
+        @ Câu lệnh: ip arp inspection trust
+    + Mọi gói tin ARP Reply do các PC kết nối trên UNTRUSTED Port đều bị kiểm tra
+    + Nếu KHÔNG tương ứng IP - MAC trong bảng DHCP snooping binding đã xây trước đó thì sẽ bị loại bỏ
+- Tính năng SPAN (Switch Port Analyzer)
+
+
+- Cơ chế xác thực AAA (Authentication Authorization Accounting): Quản lý truy cập và bảo mật thiết bị
+    1. Authentication – Xác thực:
+        - Bước xác minh danh tính người dùng hoặc thiết bị truy cập
+        - Một số phương thức xác thực phổ biến:
+            + Đăng nhập bằng username và password
+            + Mã hóa thông tin xác thực, tùy theo giao thức bảo mật sử dụng (ví dụ: PAP, CHAP, EAP...)
+    2. Authorization - Phân quyền:
+        - Sau khi xác thực thành công, hệ thống xác định người dùng được phép làm gì.
+        - Authorization có thể bao gồm:
+            + Ủy quyền một lần hoặc ủy quyền cho từng dịch vụ
+            + Phân quyền theo người dùng hoặc nhóm người dùng
+            + Gán quyền truy cập dựa trên hồ sơ tài khoản
+            + Hỗ trợ các giao thức mạng như IP, IPX, ARA, Telnet
+    3. Accounting – Ghi nhận và giám sát:
+        - Thu thập và ghi lại hoạt động truy cập của người dùng, phục vụ cho các mục đích:
+            + Kiểm toán, báo cáo, tính cước
+            + Ghi nhận thời gian bắt đầu và kết thúc phiên truy cập
+            + Theo dõi các lệnh đã thực thi (ví dụ: PPP)
+            + Ghi nhận số lượng gói tin, số byte truyền tải
+- Static Routing (Giao thức định tuyến tĩnh):
+    + Khi sử dụng định tuyến tĩnh thì thiết bị sẽ cân bằng tải dữ liệu theo tuyến đường (2 tuyến đường thì 50 50)
+    + Sử dụng giá trị AD để lựa chọn tuyến đường ưu tiên, AD càng thấp độ tin cậy càng cao
+        * Tại một thời điểm: Bảng định tuyến (Routing Table) chỉ lưu duy nhất tuyến đường chính có AD = 5 thấp hơn
+        * Tuyến đường dự phòng (AD = 10) bị ẩn đi và lưu trong bộ nhớ cấu hình (Running-config).
+    + Không cảm nhận được sự thay đổi của hệ thống mạng khi cổng hướng đến đích bị ngắt kết nối
+    + Khi xảy ra sự cố : Nếu tuyến đường chính (AD = 5) bị đứt kết nối hoặc mất tính hiệu (SLA báo Down), router sẽ xóa nó khỏi bảng định tuyến. Lúc này, tuyến đường dự phòng (AD = 10) mới được cập nhật vào để thay thế và duy trì kết nối mạng.
+- Dynamic Routing (Giao thức định tuyến động): chia làm 2 nhóm ([IGP - Nội vùng] và [EGP - Ngoại vùng])
+    + Khi sử dụng định tuyến động mà cổng hướng đến đích bị ngắt kết nối thì sẽ gửi cảnh báo đến thiết bị nguồn
+    + IGP (Interior Gateway Protocol): Sử dụng bên trong hạ tầng mạng của công ty  - (RIP, OSPF, EIGRP)
+        * IGP - chia làm 2 nhóm: 
+            # Distance Vector: Đi đến đâu hỏi đường đến đó - điển hình như RIP
+                @ RIP (Routing Information Protocol): AD = 120
+                    - Chỉ phù hợp cho hệ thống mạng có băng thông trên tất cả các phân đoạn mạng đồng nhất với nhau
+                    - Cứ định kì 30s 1 lần Router sẽ đẩy qua láng giềng tất cả các tuyến đường trong bảng định tuyến
+                    - Router sẽ không học tất cả các đường cùng một lúc, mà chỉ cập nhật đường tốt nhất vào bảo bảng định tuyến
+                    - RIP: split-Horizon thiết bị học được mạng từ thiết bị khác sẽ không quảng bá ngược lại mạng đó nữa
+                    - RIP: Timer
+                        1. Mặc định 30s 1 lần Router sẽ gửi định tuyến đến thiết bị láng giềng
+                        2. Tiếp tục 30s sau gửi tiếp 1 lần nữa
+                        3. Nhưng qua giây thứ 31 Router láng giềng không nhận được định tuyến của mạng đó nữa
+                        4. Thì Router láng giềng vẫn giữ mạng đó đến 180s 
+                        5. Nhưng đến giây 181 thì nó sẽ cập nhật metric là [120/16]
+                            - Metric tối đa là 16 để tránh loop: [120/16] hủy gói tin
+                        6. Router láng giềng vẫn giữ mạng cho đến giây thứ 240
+                        7. Qua giây 241 thì Router láng giềng sẽ xóa mạng đó ra khỏi bảng định tuyến
+                    - Mạng kết nối trực tiếp (connected) có tham số AD = 0
+                    - Router cấu hình 2 giao thức RIP=120 và OSPF=110 thì nó sẽ lựa chọn AD thấp hơn là OSPF
+                    - RIPv1 và RIPv2: không tương thích ngược với nhau
+                        + RIPv1: 255.255.255.255
+                            - Cứ 30s nó quảng bá định tuyến đến địa chỉ Broadcast
+                            - Classful: chỉ quảng bá địa chỉ mạng
+                        + RIPv2: 224.0.0.9
+                            - Cứ 30s nó quảng bá định tuyến đến địa chỉ Multicast
+                            - Classless: quảng bá địa chỉ mạng và Subnet Mask
+                    - RIP: no auto-summary: quảng bá từng mạng cụ thể cho Router láng giềng
+                    - RIP: auto-summary: gọm mạng theo dải IP rồi quảng bá mạng gọm đó cho Router láng giềng
+                    - Passive-interface: Chặn không cho RIP gửi gói tin cập nhật ra cổng Loopback
+                    - RIP Authentication: Để an toàn, các Router kết nối trực tiếp với nhau cần phải "khớp" mật khẩu mã hóa MD5 thì mới chịu học định tuyến của nhau.
+            # Link-State: Cần bộ nhớ nhiều, lưu trữ bảng định tuyến, chọn ra đường tối ưu nhất - điển hình như OSPF
+                @ OSPF (Open Shortest Path First): AD = 110
+                    - Area (Phân vùng mạng):
+                        + Chia hệ thống mạng lớn thành các vùng nhỏ để giảm tải CPU/RAM cho Router và tối ưu băng thông
+                        + Area 0 (Backbone Area): Vùng trung tâm bắt buộc phải có, tất cả các Area khác phải kết nối trực tiếp vào Area 0
+                    - OSPF Metric (Chi phí đường truyền):
+                        + Gọi là Cost: Tính dựa trên băng thông (Bandwidth), băng thông càng lớn thì Cost càng nhỏ (đường càng tốt)
+                        + Công thức: Cost = Reference Bandwidth (mặc định là 10^8 bps) / Bandwidth của interface
+                    - Nguyên tắc OSPF: Ưu tiên đường đi có tổng Cost thấp nhất (Metric = Cost cổng ra)
+                    - Router-ID (Định danh Router):
+                        + Là một địa chỉ IPv4 duy nhất dùng để định danh từng con Router trong mạng OSPF
+                        + Quy tắc chọn Router-ID: Ưu tiên chọn IP cấu hình thủ công (Command) -> Nếu không có, chọn IP lớn nhất của Interface Loopback -> Nếu không có, chọn IP lớn nhất của Interface vật lý đang hoạt động (Active)
+                    - OSPF Neighbor Timer (Thời gian duy trì láng giềng trong mạng Ethernet):
+                        + Hello Timer (10s): Định kỳ cứ 10s Router gửi gói tin Hello một lần để duy trì mối quan hệ láng giềng
+                        + Dead Timer (40s): Mặc định gấp 4 lần Hello Timer. Nếu quá 40s không nhận được Hello, Router sẽ tuyên bố láng giềng đã "chết" và hủy đường đi qua láng giềng đó
+                    - OSPF Neighbor Condition (Điều kiện để thiết lập láng giềng):
+                        + Hai Router kết nối với nhau phải khớp hoàn toàn các thông số sau thì mới thành láng giềng:
+                            1. Cùng Area ID (Cùng thuộc một phân vùng)
+                            2. Khớp thông số Timers (Cùng Hello Timer và Dead Timer)
+                            3. Cùng Subnet Mask và cùng dải mạng IP trên cổng kết nối
+                            4. Khớp mật khẩu xác thực (Authentication) nếu có cấu hình bảo mật
+                    - Quảng bá của OSPF (Tùy theo loại môi trường mạng):
+                        + Point-to-Point (Mạng điểm - điểm):
+                            * Kết nối trực tiếp giữa 2 Router (ví dụ qua cáp Serial hoặc đường thuê riêng)
+                            * Không cần bầu chọn DR/BDR, gửi gói tin cập nhật trực tiếp qua địa chỉ Multicast 224.0.0.5
+                        + Broadcast Network (Mạng đa truy cập):
+                            * Kết nối nhiều Router qua một thiết bị trung tâm (ví dụ như Switch Ethernet)
+                            * Bắt buộc phải bầu chọn DR và BDR để đứng ra làm trung gian quản lý thông tin, tránh việc các Router gửi cập nhật chồng chéo lên nhau
+                    - DR Selection (Cơ chế bầu chọn Router trưởng vùng):
+                        + Cơ chế bầu chọn:
+                            1. Priority cao nhất: Router nào có OSPF Priority trên interface cao nhất sẽ thắng (mặc định là 1, nếu chỉnh bằng 0 thì không tham gia bầu chọn)
+                            2. Router-ID lớn nhất: Nếu Priority bằng nhau, Router nào có Router-ID lớn hơn sẽ được chọn làm DR
+                        + Lưu ý (Non-preemptive): Khi DR đã được bầu xong và đang chạy, một Router khác có Priority cao hơn tham gia vào mạng cũng sẽ KHÔNG cướp ngôi của DR hiện tại
+                    - BDR (Backup Designated Router - Router phó vùng):
+                        + Được bầu chọn đồng thời với DR, là Router có Priority hoặc Router-ID lớn thứ nhì trong mạng
+                        + Hoạt động ở chế độ dự phòng: Luôn lắng nghe thông tin mạng, nếu DR bị chết hoặc lỗi, BDR sẽ lập tức lên thay thế làm DR mà không làm gián đoạn mạng
+                        + Địa chỉ nhận tin: Cả DR và BDR đều lắng nghe cập nhật từ các Router khác (DRother) gửi về qua địa chỉ Multicast 224.0.0.6
+                @ EIGRP
+                
+    + EGP (Exterior Gateway Protocol): Sử dụng kết nối 2 mạng khác nhau (VNPT định tuyến với Viettel) - (BGP)
+
+- Giao thức định tuyến động RIP (Routing Information Protocol)  - (XEM KỸ Ở [Dynamic Routing])
+- Giao thức định tuyến động OSPF (Open Shortest Path First)     - (XEM KỸ Ở [Dynamic Routing])
+- Giao thức định tuyến động EIGRP 
+
+- Kỹ thuật bảo mật ACL (Access Control List)
+    + Giới thiệu về hoạt động ACL: là một danh sách quy tắc hoặc bộ lọc được sử dụng trong mạng máy tính để kiểm soát lưu lượng dữ liệu dựa trên các tiêu chí như địa chỉ IP, cổng, giao thức, v.v. ACL thường được triển khai trên các thiết bị định tuyến hoặc tường lửa để cho phép, chặn hoặc ưu tiên lưu lượng mạng.
+        @ Filtering: Lọc gói tin đi qua router để ngăn chặn truy cập trái phép.
+        @ Classification: Phân loại lưu lượng để xử lý đặc biệt (QoS, Routing policy).
+        @ Định hướng xử lý: 
+            - Permit: Cho phép gói tin đi tiếp.
+            - Deny: Hủy bỏ gói tin (Drop).
+        @ Ứng dụng phổ biến: Lọc lưu lượng VPN, kiểm soát Route map trong Routing (EIGRP/OSPF), chọn nguồn NAT, quản lý truy cập của End Users.
+    + Nguyên tắc thực thi của ACL:
+        * Xử lý từ trên xuống dưới (Top-Down): Khớp dòng nào thực thi dòng đó và dừng lại, bỏ qua các dòng dưới.
+        * Implicit Deny (Cấm ngầm định): Cuối mỗi ACL luôn có một dòng ẩn cấm tất cả (`deny any` hoặc `deny ip any any`). Gói tin không khớp dòng nào ở trên sẽ bị hủy.
+    + Các loại ACL: Standard, Extended và Named
+        @ Standard ACL (Lọc theo IP Nguồn) - [Nên đặt GẦN ĐÍCH]
+            - Phạm vi ID: 1-99 và 1300-1999
+            - Cấu hình mẫu:
+                R(config)# access-list 1 permit 10.0.0.0 0.255.255.255
+                R(config)# interface F0/0
+                R(config-if)# ip access-group 1 out
+            - Ứng dụng chặn Telnet/SSH (dùng access-class):
+                R(config)# access-list 1 deny 20.0.0.0 0.255.255.255
+                R(config)# access-list 1 permit any
+                R(config)# line vty 0 4
+                R(config-vty)# access-class 1 in
+        @ Extended ACL (Lọc chi tiết: S.IP, D.IP, Protocol, Port) - [Nên đặt GẦN NGUỒN]
+            - Phạm vi ID: 100-199 và 2000-2699
+            - Cấu hình mẫu (Cấm IP 20.0.0.1 Web Server port 80):
+                R(config)# access-list 100 deny tcp host 20.0.0.1 any eq 80
+                R(config)# access-list 100 permit ip any any
+            - Cấu hình mẫu (Chỉ cho phép Host truy cập Remote Desktop port 3389 đến Server):
+                R(config)# access-list 100 permit tcp host 172.16.1.1 host 10.0.0.100 eq 3389
+                R(config)# access-list 100 deny tcp any host 10.0.0.100 eq 3389
+                R(config)# access-list 100 permit ip any any
+        @ Named ACL (Quản lý bằng Tên, dễ chỉnh sửa bằng số Sequence)
+            - Standard Named:
+                R(config)# ip access-list standard BLOCK_USER
+                R(config-std-nacl)# 10 permit 20.0.0.1 0.0.0.0
+                R(config-std-nacl)# 20 permit 10.0.0.0 0.255.255.255
+            - Extended Named:
+                R(config)# ip access-list extended ALLOW_REMOTE
+                R(config-ext-nacl)# 10 permit tcp host 172.16.1.1 host 10.0.0.100 eq 3389
+- Kỹ thuật định tuyến NAT (Network Address Translation)
+    + Giới thiệu về hoạt động NAT:
+        @ Chức năng chính: Chuyển đổi từ IP Private (IP nội bộ/IP lậu) thành IP Public (IP công cộng/IP hợp lệ) để có thể đi ra Internet.
+        @ Tiết kiệm không gian địa chỉ IPv4: Giúp hàng ngàn thiết bị trong mạng nội bộ dùng chung một hoặc một vài IP Public duy nhất.
+        @ Tăng tính bảo mật: Giấu cấu trúc IP nội bộ đối với môi trường Internet bên ngoài.
+        @ Các thuật ngữ địa chỉ trong NAT (Cực kỳ quan trọng để cấu hình):
+            - Inside Local: Địa chỉ IP Private của thiết bị trong mạng nội bộ (Ví dụ: 192.168.1.10).
+            - Inside Global: Địa chỉ IP Public đại diện cho mạng bên trong khi đi ra ngoài Internet (Địa chỉ sau khi được NAT).
+            - Outside Global: Địa chỉ IP Public của thiết bị đích ngoài Internet (Ví dụ: IP của Google 8.8.8.8).
+            - Outside Local: Địa chỉ IP của thiết bị bên ngoài được nhìn từ mạng nội bộ (Thường trùng với Outside Global).
+    + Các NAT phổ biến: Nhóm One-to-One: STATIC NAT và nhóm Many-to-Many: DYNAMIC NAT và Nhóm Many-to-One: NAT OVERLOAD (PAT)
+        @ Nhóm One-to-One:  
+            # Static NAT (NAT tĩnh - Ánh xạ 1-1):
+                - Tính chất: Một IP Private cố định sẽ luôn được đổi thành một IP Public cố định.
+                - Ứng dụng: Thường dùng cho các Server nội bộ (Web Server, Mail Server) cần cấu hình để bên ngoài Internet có thể truy cập vào.
+                - Cấu hình mẫu:
+                    R(config)# ip nat inside source static 192.168.1.100 203.162.1.10
+                    R(config)# interface F0/0 (Cổng kết nối mạng nội bộ)
+                    R(config-if)# ip nat inside
+                    R(config)# interface F0/1 (Cổng kết nối ra Internet)
+                    R(config-if)# ip nat outside
+        @ Nhóm Many-to-Many: (Hiện nay ko còn đc sử dụng nữa )
+            # Dynamic NAT (NAT động - Ánh xạ N-N theo Pool):
+                - Tính chất: Định nghĩa một nhóm IP Public (Pool). Khi thiết bị bên trong đi ra ngoài, Router sẽ bốc ngẫu nhiên một IP Public rảnh trong Pool để cấp phát.
+                - Nhược điểm: Nếu Pool có 5 IP Public mà có 6 thiết bị ra mạng cùng lúc thì thiết bị thứ 6 phải xếp hàng đợi. Rất ít khi dùng trong thực tế.
+                - Cấu hình mẫu:
+                    R(config)# ip nat pool MY_POOL 203.162.1.10 203.162.1.15 netmask 255.255.255.0
+                    R(config)# access-list 1 permit 192.168.1.0 0.0.0.255 (Dùng ACL chọn dải IP Private được phép NAT)
+                    R(config)# ip nat inside source list 1 pool MY_POOL
+                    R(config)# interface F0/0
+                    R(config-if)# ip nat inside
+                    R(config)# interface F0/1
+                    R(config-if)# ip nat outside
+        @ Nhóm Many-to-One:
+            # NAT Overload / PAT (Port Address Translation - Ánh xạ N-1):
+                - Tính chất: Cho phép tất cả IP Private đi ra ngoài Internet bằng cách dùng chung, duy nhất một địa chỉ IP Public, (hoặc IP của cổng WAN), phân biệt nhau bằng **Số hiệu cổng (Port Number)**.
+                - Ứng dụng: Loại NAT quốc dân, sử dụng ở 99% các doanh nghiệp và hộ gia đình hiện nay.
+                - Cấu hình mẫu (NAT ăn theo IP của cổng Interface Internet):
+                    R(config)# access-list 1 permit 192.168.1.0 0.0.0.255 (Chọn dải IP Private cần NAT)
+                    R(config)# ip nat inside source list 1 interface F0/1 overload (Từ khóa overload kích hoạt PAT)
+                    R(config)# interface F0/0
+                    R(config-if)# ip nat inside
+                    R(config)# interface F0/1
+                    R(config-if)# ip nat outside
+    + Lệnh kiểm tra và khắc phục lỗi (Troubleshooting NAT):
+        * `show ip nat translations`: Xem bảng tra cứu các địa chỉ đang được NAT trong thời gian thực (Lệnh dùng nhiều nhất).
+        * `show ip nat statistics`: Xem các thông số thống kê của NAT (Có bao nhiêu gói được NAT, Pool đang dùng thế nào).
+        * `clear ip nat translation *`: Xóa toàn bộ bảng NAT hiện tại để ép Router cập nhật lại từ đầu.
+- 
+
+
+
+
+
+
+
+
+1. Hãy phân biệt giữa định tuyến tĩnh (statis route) và định tuyến động (Dynamic route) 
+2. Cho biết câu lệnh để kiểm tra route connected hiện có trong bảng định tuyến
+3. Cho biết câu lệnh để kiếm tra statis route đã cấu hình bên trong bảng định tuyến
+4. Cho biết câu lệnh nguyên lý hoạt động của các tiện ích ping và trace
+
+1. Hãy nêu công dụng của giá trị Ad - Administrative khi được sử dụng trong định tuyến
+2. Cho biết giá trị mặc định AD của các statis route được câu hình trên Router Cisco là bao nhiêu
+
+1. Switch học MAC dựa vào địa chỉ nào của Frame, source hay destination 
+2. Switch sẽ hành xử như thế nào khi nhận được gói tin có địa chỉ Broadcast
+3. Cho biết câu lệnh để kiểm tra địa chỉ MAC của switch
+
+1. Switch sẽ hành xử như thế nào nếu ta gán port vào một VLAN mà chưa được tạo ra trước đó
+2. Nêu sự khác nhau giữa 3 mode VTP
+3. Cho biết câu lệnh để kiểm tra thông tin về các đường trunk
+4. Hãy nêu cộng dụng của giá trị revision trong hoạt động của VTP
+
+1. Hãy nêu các bước trong tiến trình hội tụ spanning-tree protocol
+2. Hãy cho biết ưu điểm nổi bật của PVST+ của Cisco khi so sánh với common STP
+
+
+
